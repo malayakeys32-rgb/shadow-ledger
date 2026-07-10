@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: shadow-ledger-backend
+    env: node
+    rootDir: backend
+    buildCommand: "npm install && npm run build"
+    startCommand: "node dist/server.js"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: shadow-ledger-db
+          property: connectionString
+      - key: JWT_SECRET
+        value: shadowledger2026
+
+databases:
+  - name: shadow-ledger-db
+    plan: free
