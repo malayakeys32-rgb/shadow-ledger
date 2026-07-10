@@ -1,0 +1,53 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  password  String
+  createdAt DateTime   @default(now())
+  incidents Incident[]
+
+  @@map("users")
+}
+
+model Incident {
+  id          String   @id @default(cuid())
+  title       String
+  category    String
+  severity    Severity
+  status      Status   @default(OPEN)
+  date        String
+  time        String
+  description String?
+  tags        String[] @default([])
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("incidents")
+}
+
+enum Severity {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum Status {
+  OPEN
+  INVESTIGATING
+  MONITORING
+  ESCALATED
+  CLOSED
+}
